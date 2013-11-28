@@ -6,7 +6,7 @@ function ($, d3, config, floorPlan) {
     var app = {
         initialize: function () {
 
-        	floorPlan.drawRooms(17,5);
+        	floorPlan.initialize(17,5);
 
 		}
 
