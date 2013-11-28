@@ -13,7 +13,7 @@ function () {
 		svgContainer: null,
 
 		render: function (bldg, floor) {
-			this.getRoomData(bldg, floor);
+			var roomData = this.getRoomData(bldg, floor);
 
 			this.drawRects(roomData);
 			this.drawLabels(roomData);
@@ -22,7 +22,6 @@ function () {
 		// this is really initialize... TODO: rename
 		drawRooms: function (bldg, floor) { 
 			var roomData = this.getRoomData(bldg, floor);
-console.log(roomData);
 
 			var that = this;
 
@@ -42,19 +41,19 @@ console.log(roomData);
 			this.render(bldg, floor);
 
 			$("#seventeen-5").click(function() {
-				that.render(that.getRoomData(17, 5));
+				that.render(17, 5);
 			});
 			$("#seventeen-4").click(function() {
-				that.render(that.getRoomData(17, 4));
+				that.render(17, 4);
 			});
 			$("#seventeen-3").click(function() {
-				that.render(that.getRoomData(17, 3));
+				that.render(17, 3);
 			});
 			$("#seventeen-2").click(function() {
-				that.render(that.getRoomData(17, 2));
+				that.render(17, 2);
 			});
 			$("#seventeen-1").click(function() {
-				that.render(that.getRoomData(17, 1));
+				that.render(17, 1);
 			});
 		},
 
@@ -237,8 +236,7 @@ console.log(roomData);
 
 
 			];
-
-			return rooms[floor];
+			return rooms[floor-1];
 
 		}
 
