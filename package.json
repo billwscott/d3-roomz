@@ -1,7 +1,7 @@
 {
     "name": "roomz",
     "version": "0.0.1",
-    "description": "displays conference rooms on the paypal campus and allows you to book a room",
+    "description": "displays conference rooms (via d3js) on the paypal campus and allows you to book a room",
     "author": "Bill Scott",
     "main": "index.js",
     "scripts": {
