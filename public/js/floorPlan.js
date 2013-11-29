@@ -42,7 +42,7 @@ function () {
 
 		initialize: function (bldg, floor) { 
 
-			var that = this;
+			var self = this;
 			this.svgContainer = d3.select('body').append('svg');
 			this.xScale = d3.scale.linear();
 			this.yScale = d3.scale.linear();
@@ -53,25 +53,25 @@ function () {
 			this.render(bldg, floor);
 
 			$("#seventeen-5").click(function() {
-				that.render(17, 5);
+				self.render(17, 5);
 			});
 			$("#seventeen-4").click(function() {
-				that.render(17, 4);
+				self.render(17, 4);
 			});
 			$("#seventeen-3").click(function() {
-				that.render(17, 3);
+				self.render(17, 3);
 			});
 			$("#seventeen-2").click(function() {
-				that.render(17, 2);
+				self.render(17, 2);
 			});
 			$("#seventeen-1").click(function() {
-				that.render(17, 1);
+				self.render(17, 1);
 			});
 		},
 
 		drawRects: function(roomData) {
 
-			var that = this;
+			var self = this;
 
 			var rect = this.svgContainer.selectAll('rect')
 				.data(roomData);
@@ -84,28 +84,28 @@ function () {
 			// update
 
 			rect.transition()
-				.attr('x', function (d) { return that.xScale(d.x); })
-				.attr('y', function (d) { return that.yScale(d.y); })
-				.attr('width', function (d) { return that.xScale(d.width); })
-				.attr('height', function (d) { return that.yScale(d.height); })
+				.attr('x', function (d) { return self.xScale(d.x); })
+				.attr('y', function (d) { return self.yScale(d.y); })
+				.attr('width', function (d) { return self.xScale(d.width); })
+				.attr('height', function (d) { return self.yScale(d.height); })
 				.style('fill', function(d) { return d.color });
 
 			rect.on('click', function (d, i) {
 					// shift the object to the right by changing data model +1
 
-					//that.roomData[i].x += 1; 
+					//self.roomData[i].x += 1; 
 					//d.x = d.x + 1;
 
 					// select the object clicked on
 					//d3.select(this)
 						// .style('fill', 'red')    // change to red
-						// .attr('x', that.xScale(d.x)); // reset x position to new value (move right)
+						// .attr('x', self.xScale(d.x)); // reset x position to new value (move right)
 
 					// also move the associated room label with the room
-					// d3.select('#room-label-' + i).attr('x', that.xScale(d.x));
+					// d3.select('#room-label-' + i).attr('x', self.xScale(d.x));
 					
 					// Try to reserve this room
-					that.bookRoom(d);
+					self.bookRoom(d);
 					return;
 
 				}); // end of onclick
@@ -115,7 +115,7 @@ function () {
 
 		drawLabels: function(roomData) {
 
-			var that = this,
+			var self = this,
 			    text = this.svgContainer.selectAll('.room-label').data(roomData)
 
 			this.text = text;
@@ -124,22 +124,22 @@ function () {
 			text.enter()
 				.append('foreignObject');
 				
-			// called when there are data items that require a visual update
+			// called when there are data items self require a visual update
 			text.transition().attr('class', function(d) { return 'room-label'; })
 				.attr('id', function(d, i) { return 'room-label-' + i; })
-				.attr('x', function(d) { return that.xScale(d.x); })
-				.attr('y', function(d) { return that.yScale(d.y); })
-				.attr('width', function (d) { return that.xScale(d.width); })
-				.attr('height', function (d) { return that.yScale(d.height); })
+				.attr('x', function(d) { return self.xScale(d.x); })
+				.attr('y', function(d) { return self.yScale(d.y); })
+				.attr('width', function (d) { return self.xScale(d.width); })
+				.attr('height', function (d) { return self.yScale(d.height); })
 				.text(function(d) { return d.name; });
 
 
 			text.on('click', function (d, i) {
-					that.bookRoom(d);
+					self.bookRoom(d);
 					return;
 				}); // end of onclick
 
-			// called for data items that have been removed
+			// called for data items self have been removed
 			text.exit().transition().remove();
 		},
 
@@ -150,7 +150,7 @@ function () {
 
 		fetchRoomData: function(bldg, floor, renderRooms) {
 
-			var that = this;
+			var self = this;
 			$.ajax({
 				//url: '/getRoomData?bldg=' + bldg + '&floor=' + floor,
 				url: '/getRooms/' + bldg + '/floor/' + floor,
@@ -168,7 +168,7 @@ function () {
 				success: function(data) {
 					//console.log('process sucess');
 					//console.log(data);
-					renderRooms.call(that, data);
+					renderRooms.call(self, data);
 				},
 
 				error: function() {
