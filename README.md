@@ -7,5 +7,6 @@ To install the roomz app
 
 1. Clone this repo: `git clone https://github.com/billwscott/d3-roomz.git`
 2. Install npm modules: `npm install`
-3. Install client side JavaScript libraries: `bower install`
-4. Start the node app: `npm start`
+3. Install bower if not already installed: `npm install -g bower`
+4. Install client side JavaScript libraries: `bower install`
+5. Start the node app: `npm start`
