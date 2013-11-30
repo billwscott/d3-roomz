@@ -1,6 +1,6 @@
 'use strict';
 
-require(['jquery', 'lib/d3', 'config', 'floorPlan'], 
+require(['lib/jquery/jquery', 'lib/d3/d3', 'config', 'floorPlan'], 
 function ($, d3, config, floorPlan) {
 
     var app = {
