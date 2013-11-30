@@ -1,17 +1,18 @@
 'use strict';
 
-require(['lib/jquery/jquery', 'lib/d3/d3', 'config', 'floorPlan'], 
-function ($, d3, config, floorPlan) {
+require(['config'], function (config) {
 
-    var app = {
-        initialize: function () {
+	require(['jquery', 'd3', 'floorPlan'], function ($, d3, floorPlan) {
 
-        	floorPlan.initialize(17,5);
+	    var app = {
+	        initialize: function () {
 
-		}
+	        	floorPlan.initialize(17,5);
+			}
 
-    };
+	    };
 
-    app.initialize();
+	    app.initialize();
 
+	});
 });
