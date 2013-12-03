@@ -7,8 +7,10 @@ function () {
 	var FloorPlan = {
 
 		width: 800,
-		height: 800,
-		margin: 50,
+		height: 400,
+		margin: 100,
+		top: 0,
+		left: 0,
 		xScale: null,
 		yScale: null,
 		svgContainer: null,
@@ -31,8 +33,10 @@ function () {
 				.range([0, this.height]);
 			
 			this.svgContainer
+				.attr('x', 100)
 				.attr('width', this.width)
-				.attr('height', this.height);
+				.attr('height', this.height)
+				.attr('class', 'svg-container');
 
 			this.roomData = roomData;
 			this.drawRects(roomData);
@@ -43,15 +47,18 @@ function () {
 		initialize: function (bldg, floor) { 
 
 			var self = this;
-			this.svgContainer = d3.select('body').append('svg');
+			this.svgContainer = d3.select('.floor-container').append('svg');
 			this.xScale = d3.scale.linear();
 			this.yScale = d3.scale.linear();
 
-			this.width = $( window ).width() - this.margin;
-			this.height = $( window ).height() - this.margin;
+			this.width = $( '.floor-container' ).width();
+			this.height = $( '.floor-container' ).height();
 
 			this.render(bldg, floor);
 
+			// TODO: would it be better to handle with backbone? Then when these get clicked
+			// we can  trigger a render for the D3 engine, but also a baseView.render();
+			// https://github.com/kjbekkelund/writings/blob/master/published/understanding-backbone.md
 			$("#seventeen-5").click(function() {
 				self.render(17, 5);
 			});
@@ -148,6 +155,7 @@ function () {
 				roomDatum.floor + '.' + roomDatum.location + ' ' + roomDatum.name);
 		},
 
+		// TODO: change to fetchFloorData
 		fetchRoomData: function(bldg, floor, renderRooms) {
 
 			var self = this;

@@ -19,7 +19,7 @@ FloorPlanModel.prototype = {
 
 		// may want to have this sectioned as array of sites containing array of buildings 
 		// containing array of floors containing array of conf rooms
-		var rooms = [
+		var floors = [
 
 			// floor 1
 			[
@@ -206,7 +206,7 @@ FloorPlanModel.prototype = {
 
 		];
 
-		return rooms[floor-1];
+		return floors[floor-1];
 
 	}
 };
