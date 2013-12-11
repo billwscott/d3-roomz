@@ -1,0 +1,11 @@
+{>"layouts/master" /}
+
+{<body}
+  
+<div class="floor">
+    <div class="floor-container"></div>
+</div>
+
+<script data-main="js/edit" src="js/lib/requirejs/require.js"></script>
+
+{/body}

@@ -46,6 +46,9 @@ function () {
 
 		initialize: function (bldg, floor) { 
 
+			//this.loadSVGFile('USA-SANJOSE-NORTH-17-05.dwg.svg', '.floor-container');
+			//return;
+
 			var self = this;
 			this.svgContainer = d3.select('.floor-container').append('svg');
 			this.xScale = d3.scale.linear();
@@ -183,6 +186,14 @@ function () {
 					console.log('process error');
 				},
 			});
+		},
+
+		loadSVGFile: function(svgFileName, appendElem) {
+			d3.xml(svgFileName, "image/svg+xml", function(xml) {
+  				//document.body.appendChild(xml.documentElement);
+  				$(appendElem).append(xml.documentElement);
+			});
+		
 		}
 
 	};

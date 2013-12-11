@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-<div id="wrapper">
+<div id="container">
     {+body /}
 </div>
-<script data-main="js/app" src="js/lib/requirejs/require.js"></script>
 
 </body>
 </html>

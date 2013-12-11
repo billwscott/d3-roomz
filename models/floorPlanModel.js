@@ -13,6 +13,9 @@ FloorPlanModel.prototype = {
 
 	// Hard coded mock data for now
 	load: function(bldg, floor) {
+
+		// TODO: read from Mongo DB
+		
 		console.log('load: floor = ' + floor);
 		var self = this;
 
