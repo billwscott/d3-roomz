@@ -1,13 +1,48 @@
+'use strict';
+
+//var mongoose = require('mongoose');
+
 function FloorPlanModel () {
-	// TODO: set up caching
+
+	// var Schema = mongoose.Schema;
+
+	// var bldgSchema = Schema({
+	// 	name: String,
+	// 	floors: [{type: Schema.Types.ObjectId, ref: 'Floor'}]
+	// });
+
+ //    var floorSchema = Schema({
+ //    	//_bldg: {type: Number, ref: 'Building'},
+ //        x: Number,
+ //        y: Number,
+ //        width: Number,
+ //        height: Number,
+ //        name: String,
+ //        color: String,
+ //        bldg: String,
+ //        floor: String,
+ //        location: String
+ //    });
+
+ //    this.Bldg = mongoose.model('Building', bldgSchema);
+ //    this.Floor = mongoose.model('Floor', floorSchema);
 }
 
 FloorPlanModel.prototype = {
 
+	// Bldg: null,
+	// Floor: null,
+
 	loadAsync: function (bldg, floor, callback) {
 
 		var result = this.load(bldg, floor);
-		//setTimeout(f, 1000);
+
+		// var bldg = new Bldg({name: "17"});
+		// bldg.save(function(err) {
+		// 	if(err) console.log(err);
+
+		// 	var floors = new Floor({});
+		// })
 		callback(result);
 	},
 

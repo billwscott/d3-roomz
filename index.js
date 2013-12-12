@@ -5,6 +5,7 @@ var kraken = require('kraken-js'),
 	express = require('express'),
 	appsec = require('lusca'),
 	server = express(),
+	db = require('./lib/database'),
     app = {};
 
 
@@ -16,6 +17,8 @@ app.configure = function configure(nconf, next) {
 		xframe: 'SAMEORIGIN',
 		p3p: 'ABCDEF'
 	}));
+
+    db.config(nconf.get('databaseConfig'));
 
 	next(null);
 };
