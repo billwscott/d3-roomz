@@ -6,7 +6,7 @@ require(['config'], function (config) {
 
 		var app = {
 			initialize: function () {
-				floorPlan.initialize(17,5);
+				floorPlan.initialize(17,5, null, {editable:false});
 			}
 	    };
 

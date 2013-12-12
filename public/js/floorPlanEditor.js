@@ -6,9 +6,16 @@ function () {
 
 	var FloorPlanEditor = {
 
-		initialize: function (bldg, floor) { 
+		floorPlan: null,
+		xCoordFactor: 6,
+		yCoordFactor: 6,
+		roomMinWidth: 8,
+		roomMinHeight: 8,
 
-			this.loadSVGFile('USA-SANJOSE-NORTH-17-05.dwg.svg', '.floor-container', 250);
+		initialize: function (bldg, floor, floorPlan) { 
+
+			this.floorPlan = floorPlan;
+			this.loadSVGFile('USA-SANJOSE-NORTH-17-05.dwg.svg', '.floor-svg-container', 250);
 
 		},
 
@@ -19,14 +26,19 @@ function () {
   				var svg = document.getElementsByTagName('svg')[0];
 				var box = svg.viewBox.baseVal;
 				box.y = (box.y == 0 ? yOffset : box.y);
-				box.y = yOffset;
-				svg.setAttribute('viewBox', box.x + ' ' + box.y + ' ' + box.width + ' ' + box.height);
+				svg.setAttribute('viewBox', box.x + ' ' + box.y + ' ' + box.width + ' ' + box.height)
 
-				var rooms = self.extractConfRoomData();
+				//.attr("viewBox", "0 0 400 400");
 
-				for(var i=0; i<rooms.length; i++) {
-					console.log(rooms[i]);
-				}
+				var floor = self.extractConfRoomData();
+
+				$('#floor-title').append('Floorplan for ' + floor.bldg + '.' + floor.floor);
+
+
+				// fix initialize to support an override of data
+				// should we also pass in the 'elem' to attach this to?
+				// or should this be a different method?
+				self.floorPlan.initialize(floor.bldg, floor.floor, floor.rooms, {editable: true});
 
 				// save in Mongo DB
 
@@ -39,7 +51,9 @@ function () {
 			var gElems = $('#i-rmnames').children(),
 			    len = gElems.length,
 			    confRooms = [],
-			    gText = [];
+			    gText = [],
+			    bldg = '',
+			    floor = '';
 
 			if(len === 0) {
 				// if zero, both loops below fall through. 
@@ -55,9 +69,10 @@ function () {
 
 				if (id.substring(0, 5) == 'TEXT_') {
 
-					var x = Math.floor(parseInt(gElems[i].getElementsByTagName('text')[0].getAttribute('transform').split(' ')[4])/5);
-					var y = Math.floor(parseInt(gElems[i].getElementsByTagName('text')[0].getAttribute('transform').split(' ')[5])/5);
+					var x = Math.floor(parseInt(gElems[i].getElementsByTagName('text')[0].getAttribute('transform').split(' ')[4])/this.xCoordFactor);
+					var y = Math.floor(parseInt(gElems[i].getElementsByTagName('text')[0].getAttribute('transform').split(' ')[5])/this.yCoordFactor);
 					var idx = gText.push({
+						elem: gElems[i].getElementsByTagName('text')[0],
 						value: gElems[i].getElementsByTagName('text')[0].textContent, 
 						x: x,
 						y: y
@@ -75,9 +90,10 @@ function () {
 					var confRoomNum = gText[k-1].value,
 					    confRoomName = gText[k+1].value.replace(/^\"+|\"+$/g,''),
 					    confRoomNumSplit = confRoomNum.split('.'),
-					    bldg = confRoomNumSplit[0],
-					    floor = confRoomNumSplit[1],
 					    location = confRoomNumSplit[2];
+
+					    if(bldg == '') bldg = confRoomNumSplit[0];
+					    if(floor == '') floor = confRoomNumSplit[1];
 
 					//console.log(confRoomNum + ' - ' + confRoomName);
 					//console.log({x: gText[k].x, y: gText[k].y, width: 8, height: 8, name: confRoomName, bldg: bldg, floor: floor, location: location});
@@ -85,7 +101,8 @@ function () {
 					// 17.5.051 
 
 					// {x:63, y:12, width:18, height:14, name:'Leeds', color: '#FC7F08', bldg:'17', floor:'1', location:'010'},
-					confRooms.push({x: gText[k].x, y: gText[k].y, width: 8, height: 8, name: confRoomName, bldg: bldg, floor: floor, location: location});
+					confRooms.push({x: gText[k].x, y: gText[k].y, color: '#FC7F08', width: this.roomMinWidth, height: this.roomMinHeight, name: this.initCap(confRoomName), bldg: bldg, floor: floor, location: location,
+							svgTextElem: gText[k+1].elem});
 
 
 				}
@@ -103,8 +120,14 @@ function () {
 				return cmp;
 			});
 
-			return confRooms;
+			return {bldg: bldg, floor: floor, rooms: confRooms};
 
+		},
+
+		initCap : function (str) {
+   			return str.toLowerCase().replace(/(?:^|\s)[a-z]/g, function (chr) {
+      			return chr.toUpperCase();
+   			});
 		}
 
 	};

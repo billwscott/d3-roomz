@@ -1,11 +1,43 @@
 {>"layouts/master" /}
 
 {<body}
-  
+ 
+<h1 id="floor-title"></h1>
 <div class="floor">
-    <div class="floor-container"></div>
+
+
+<!-- 	<ul id="editor-tab" class="nav nav-tabs">
+	  <li class="active"><a href="#wpr">WPR Floorplan</a></li>
+	  <li><a href="#custom">Custom Floorplan</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div class="tab-pane active" id="wpr">
+			<div class="floor-svg-container"></div>
+		</div>
+		<div class="tab-pane" id="custom">
+			<ul id="legend-list" class="legend-list list-unstyled">
+			</ul>	
+			<div style="position:absolute; x:0, y:0" class="floor-container"></div>
+		</div>
+	</div>
+ -->
+
+
+	<div class="floor-svg-container"></div>
+	<ul id="legend-list" class="legend-list list-unstyled">
+				<!-- {#rooms}{name}<br/>{/rooms} -->
+	</ul>	
+	<div style="position:absolute; x:0, y:0" class="floor-container"></div>
+
 </div>
 
+
+
 <script data-main="js/edit" src="js/lib/requirejs/require.js"></script>
+
+<script>
+
+</script>
 
 {/body}

@@ -17,12 +17,23 @@ function () {
 		rect: null,
 		text: null,
 		roomData: null,
-
-		render: function (bldg, floor) {
-			this.fetchRoomData(bldg, floor, this._renderCB);
+		buttonsDrawn: false,
+		options: {
+			editable: false
 		},
 
-		_renderCB: function (roomData) {
+		render: function (bldg, floor, roomData) {
+
+			// if room data is passed in use it as override
+			if(roomData != null) {
+				this._renderCB(bldg, floor, roomData);
+			} else
+			{
+				this.fetchRoomData(bldg, floor, this._renderCB);
+			}
+		},
+
+		_renderCB: function (bldg, floor, roomData) {
 
 			this.xScale
 				.domain([0, d3.max(roomData, function(d) { return d.x + d.width; })])
@@ -39,49 +50,63 @@ function () {
 				.attr('class', 'svg-container');
 
 			this.roomData = roomData;
+			this.drawButtons(bldg, floor, roomData);
 			this.drawRects(roomData);
 			this.drawLabels(roomData);
+			this.drawLegend(roomData);
 
 		},
 
-		initialize: function (bldg, floor) { 
+		initialize: function (bldg, floor, roomData, options) { 
 
-			//this.loadSVGFile('USA-SANJOSE-NORTH-17-05.dwg.svg', '.floor-container');
-			//return;
+			this.svgContainer = d3.select('.floor-container')
+				.append('svg');
 
-			var self = this;
-			this.svgContainer = d3.select('.floor-container').append('svg');
+
 			this.xScale = d3.scale.linear();
 			this.yScale = d3.scale.linear();
 
 			this.width = $( '.floor-container' ).width();
 			this.height = $( '.floor-container' ).height();
 
-			this.render(bldg, floor);
+			this.options = options;
 
-			// TODO: would it be better to handle with backbone? Then when these get clicked
-			// we can  trigger a render for the D3 engine, but also a baseView.render();
-			// https://github.com/kjbekkelund/writings/blob/master/published/understanding-backbone.md
-			$("#seventeen-5").click(function() {
-				self.render(17, 5);
-			});
-			$("#seventeen-4").click(function() {
-				self.render(17, 4);
-			});
-			$("#seventeen-3").click(function() {
-				self.render(17, 3);
-			});
-			$("#seventeen-2").click(function() {
-				self.render(17, 2);
-			});
-			$("#seventeen-1").click(function() {
-				self.render(17, 1);
-			});
+			this.render(bldg, floor, roomData);
+	
+		},
+
+		drawButtons: function(bldg, floor, roomData) {
+
+			if(this.buttonsDrawn)
+				return;
+
+
+			var self = this,
+				numFloors = this.getNumFloors();
+
+			// should really use a dust partial here
+			for (var i=0; i<numFloors; i++) {
+				var floor = i+1;
+				var id = bldg + '-' + floor;
+				$('#floor-controls').append('<button class="btn btn-default" id="' + id + '">Floor ' + floor + '</button>');
+
+				var handleClick = (function(f){
+				    
+				    return function() {
+				        self.render(bldg, f, null);
+				    };
+				})(floor);
+
+				$('#'+id).click(handleClick);
+
+				this.buttonsDrawn = true;
+			}
 		},
 
 		drawRects: function(roomData) {
 
-			var self = this;
+			var self = this,
+				selectedRoom = null;
 
 			var rect = this.svgContainer.selectAll('rect')
 				.data(roomData);
@@ -100,28 +125,144 @@ function () {
 				.attr('height', function (d) { return self.yScale(d.height); })
 				.style('fill', function(d) { return d.color });
 
-			rect.on('click', function (d, i) {
-					// shift the object to the right by changing data model +1
+			if(this.options.editable == true) {
+				rect.on('click', function (d, i) {
+					if(selectedRoom != null) {
+						d3.select(selectedRoom.elem)
+							.style('stroke-width', 0);
+						selectedRoom.svgTextElem.setAttribute('font-size', '1');
+					}
 
-					//self.roomData[i].x += 1; 
-					//d.x = d.x + 1;
+					d3.select(this)
+						.style('stroke-width', 2) 
+						.style('stroke', 'black');
 
-					// select the object clicked on
-					//d3.select(this)
-						// .style('fill', 'red')    // change to red
-						// .attr('x', self.xScale(d.x)); // reset x position to new value (move right)
+					d.svgTextElem.setAttribute('font-size', '16');
+					selectedRoom = {elem: this, data: d, idx: i, svgTextElem: d.svgTextElem};
 
-					// also move the associated room label with the room
-					// d3.select('#room-label-' + i).attr('x', self.xScale(d.x));
+					return;
+				});
+
+				d3.select('body')
+					.on('keydown', function(d,i) {
+					self.adjustRoom(event, selectedRoom.elem, selectedRoom.data, selectedRoom.idx);
+					return;
+
+				});
+
+			} else {
+				rect.on('click', function (d, i) {
 					
 					// Try to reserve this room
 					self.bookRoom(d);
 					return;
 
 				}); // end of onclick
+			}
 
 			rect.exit().transition().remove();
 		},
+
+		adjustRoom: function(event, roomElem, data, idx) {
+
+			switch(event.keyCode) {
+				case 38: // up
+					if(event.ctrlKey)
+						this.growVertical(event, roomElem, data, idx, -1);
+					else
+						this.moveVertical(event, roomElem, data, idx, -1);
+					break;
+				case 40: // down
+					if(event.ctrlKey)
+						this.growVertical(event, roomElem, data, idx, 1);
+					else
+						this.moveVertical(event, roomElem, data, idx, 1);
+					break;
+				case 37: // left
+					if(event.ctrlKey)
+						this.growHorizontal(event, roomElem, data, idx, -1);
+					else
+						this.moveHorizontal(event, roomElem, data, idx, -1);
+					break;
+				case 39: // right
+					if(event.ctrlKey)
+						this.growHorizontal(event, roomElem, data, idx, 1);
+					else
+						this.moveHorizontal(event, roomElem, data, idx, 1);
+
+					break;
+			}
+		},
+
+		moveVertical: function(event, roomElem, data, idx, dir) {
+			var incr = 0.1 * dir;
+			if(event.shiftKey)
+				incr *=10;
+
+			this.roomData[idx].y += incr; 
+			data.y = data.y + incr;
+
+			// select the object clicked on
+			d3.select(roomElem)
+				.attr('y', this.yScale(data.y)); // reset y position to new value (move up)
+
+			// also move the associated room label with the room
+			d3.select('#room-label-' + idx).attr('y', this.yScale(data.y));
+
+		},
+
+
+		moveHorizontal: function(event, roomElem, data, idx, dir) {
+			var incr = 0.1 * dir;
+			if(event.shiftKey)
+				incr *=10;
+
+			this.roomData[idx].x += incr; 
+			data.x = data.x + incr;
+
+			// select the object clicked on
+			d3.select(roomElem)
+				.attr('x', this.xScale(data.x)); // reset y position to new value (move up)
+
+			// also move the associated room label with the room
+			d3.select('#room-label-' + idx).attr('x', this.xScale(data.x));
+
+		},
+
+		growHorizontal: function(event, roomElem, data, idx, dir) {
+			var incr = 0.1 * dir;
+			if(event.shiftKey)
+				incr *=10;
+
+			this.roomData[idx].width += incr; 
+			data.width = data.width + incr;
+
+			// select the object clicked on
+			d3.select(roomElem)
+				.attr('width', this.xScale(data.width)); // reset y position to new value (move up)
+
+			// also move the associated room label with the room
+			//d3.select('#room-label-' + idx).attr('x', this.xScale(data.width/2));
+
+		},
+
+		growVertical: function(event, roomElem, data, idx, dir) {
+			var incr = 0.1 * dir;
+			if(event.shiftKey)
+				incr *=10;
+
+			this.roomData[idx].height += incr; 
+			data.height = data.height + incr;
+
+			// select the object clicked on
+			d3.select(roomElem)
+				.attr('height', this.yScale(data.height)); 
+
+			// also move the associated room label with the room
+			//d3.select('#room-label-' + idx).attr('x', this.xScale(data.width/2));
+
+		},
+
 
 		drawLabels: function(roomData) {
 
@@ -153,6 +294,14 @@ function () {
 			text.exit().transition().remove();
 		},
 
+		drawLegend: function(roomData) {
+			$('.legend-item').remove();
+			for(var i=0; i<roomData.length; i++) {
+				$('#legend-list').append('<li class="legend-item">' + roomData[i].name + '</li>');
+			}
+
+		},
+
 		bookRoom: function(roomDatum) {
 			console.log('Book this room:' + roomDatum.bldg + ' /' + roomDatum.bldg + '.' + 
 				roomDatum.floor + '.' + roomDatum.location + ' ' + roomDatum.name);
@@ -179,7 +328,7 @@ function () {
 				success: function(data) {
 					//console.log('process sucess');
 					//console.log(data);
-					renderRooms.call(self, data);
+					renderRooms.call(self, bldg, floor, data);
 				},
 
 				error: function() {
@@ -194,6 +343,19 @@ function () {
   				$(appendElem).append(xml.documentElement);
 			});
 		
+		},
+
+		getNumFloors: function() {
+			var numFloors = 0;
+
+			for (var i=0; i<this.roomData.length; i++) {
+
+				if (parseInt(this.roomData[i].floor) > numFloors) {
+					numFloors = this.roomData[i].floor;
+				}		
+			}
+
+			return numFloors;
 		}
 
 	};

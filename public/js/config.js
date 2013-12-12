@@ -4,6 +4,7 @@ requirejs.config({
 	paths: {
 		"jquery": "lib/jquery/jquery",
 		"d3": "lib/d3/d3",
+		"bootstrap-tab": "lib/bootstrap/js/tab",
 		"backbone": "lib/backbone/backbone",
 		"underscore": "lib/underscore/underscore",
 		"nougat": "core/nougat",
