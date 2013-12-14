@@ -32,7 +32,9 @@ function () {
 
 				var floor = self.extractConfRoomData();
 
-				$('#floor-title').append('Floorplan for ' + floor.bldg + '.' + floor.floor);
+				//floor.rooms is the edited version
+
+				$('#floor-title').append('Imported floorplan for ' + floor.bldg + '.' + floor.floor + ' from WPR CAD File');
 
 
 				// fix initialize to support an override of data

@@ -3,6 +3,7 @@
 {<body}
  
 <h1 id="floor-title"></h1>
+<button type="button" id="save-floor" class="btn btn-default save-floor">Save</button>
 <div class="floor">
 
 

@@ -5,7 +5,6 @@ function () {
 	"use strict";
 
 	var FloorPlan = {
-
 		width: 800,
 		height: 400,
 		margin: 100,
@@ -125,7 +124,28 @@ function () {
 				.attr('height', function (d) { return self.yScale(d.height); })
 				.style('fill', function(d) { return d.color });
 
+			// horrible hack to put this in this module, but editing has leaked over for the hack day project
 			if(this.options.editable == true) {
+
+				$('#save-floor').click(function() {
+			        // post to the /save
+			        var roomsToSave = [];
+
+			        for(var i=0; i<self.roomData.length;i++) {
+			        	roomsToSave[i] = self.roomData[i];
+			        	roomsToSave[i].svgTextElem = null;
+			        }
+			        //$.post( "/save", JSON.stringify({rooms: roomsToSave}) );
+
+			        $.ajax({
+            			type: 'POST',
+			            url: '/save',
+			            data: {rooms: roomsToSave},
+			            dataType: 'json'
+        			});
+
+				});
+
 				rect.on('click', function (d, i) {
 					if(selectedRoom != null) {
 						d3.select(selectedRoom.elem)
@@ -166,6 +186,26 @@ function () {
 		adjustRoom: function(event, roomElem, data, idx) {
 
 			switch(event.keyCode) {
+				case 79: // o
+					roomElem.color = '#EE7C15';
+					roomElem.setAttribute('style', 'fill:' + roomElem.color); 
+					break;
+				case 71: // g
+					roomElem.color = '#5FB632';
+					roomElem.setAttribute('style', 'fill:' + roomElem.color); 
+					break;
+				case 89: // y
+					roomElem.color = '#F2CC1F';
+					roomElem.setAttribute('style', 'fill:' + roomElem.color); 
+					break;
+				case 80: // p
+					roomElem.color = '#CC65FD';
+					roomElem.setAttribute('style', 'fill:' + roomElem.color); 
+					break;
+				case 66: // b
+					roomElem.color = '#4292F6';
+					roomElem.setAttribute('style', 'fill:' + roomElem.color); 
+					break;
 				case 38: // up
 					if(event.ctrlKey)
 						this.growVertical(event, roomElem, data, idx, -1);
@@ -304,6 +344,8 @@ function () {
 
 		bookRoom: function(roomDatum) {
 			console.log('Book this room:' + roomDatum.bldg + ' /' + roomDatum.bldg + '.' + 
+				roomDatum.floor + '.' + roomDatum.location + ' ' + roomDatum.name);
+			alert('Book this room:' + roomDatum.bldg + ' /' + roomDatum.bldg + '.' + 
 				roomDatum.floor + '.' + roomDatum.location + ' ' + roomDatum.name);
 		},
 

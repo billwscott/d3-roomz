@@ -11,12 +11,14 @@ var kraken = require('kraken-js'),
 
 app.configure = function configure(nconf, next) {
     // Fired when an app configures itself
-	server.use(appsec({
-		csrf: true,
-		csp: { /* ... */},
-		xframe: 'SAMEORIGIN',
-		p3p: 'ABCDEF'
-	}));
+
+	// server.use(appsec({
+		// csrf: true,
+		// csp: { /* ... */},
+		// xframe: 'SAMEORIGIN',
+		// p3p: 'ABCDEF'
+	// }));
+	nconf.set('middleware:appsec:csrf', false);
 
     db.config(nconf.get('databaseConfig'));
 
