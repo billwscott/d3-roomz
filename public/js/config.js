@@ -7,11 +7,7 @@ requirejs.config({
 		"bootstrap-tab": "lib/bootstrap/js/tab",
 		"backbone": "lib/backbone/backbone",
 		"underscore": "lib/underscore/underscore",
-		"nougat": "core/nougat",
-		"BaseView": "core/baseView",
-		"dust": "lib/dust/dust-core-2.0.3",
-		"dust-helpers" : "lib/dust/dust-helpers-1.1.1",
-		"dust-helpers-supplement" : "lib/dust/dust-helpers-supplement"
+		"BaseView": "core/baseView"
 	},
 	shim: {
     	"dust": {

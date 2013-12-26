@@ -2,7 +2,7 @@
 
 require(['config'], function (config) {
 
-	require(['jquery', 'd3', 'backbone', 'nougat','floorPlan'], function ($, d3, Backbone, nougat, floorPlan) {
+	require(['jquery', 'd3', 'backbone','floorPlan'], function ($, d3, Backbone, floorPlan) {
 
 		var app = {
 			initialize: function () {

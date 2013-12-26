@@ -6,6 +6,7 @@
     	"d3": "latest",
     	"requirejs": "latest",
     	"underscore": "latest",
-    	"backbone": "latest"
+    	"backbone": "latest",
+    	"bootstrap": "latest"
     }
 }
